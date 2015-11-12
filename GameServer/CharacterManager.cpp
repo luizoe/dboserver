@@ -47,8 +47,8 @@ void CharacterManager::UpdateClientData(GameClient* pClient, DWORD dwCurrTick)
 	if (false == pClient->IsClosed() && HasClients() && pClient->IsReadyToUpdate())
 	{
 		// Update LP/EP
-		pClient->SendLPEPUpdate(pClient->GetProfile()->sPcProfile.wCurLP,
-			pClient->GetProfile()->sPcProfile.avatarAttribute.wBaseMaxLP,
+		pClient->SendLPEPUpdate(pClient->GetProfile()->sPcProfile.dwCurLP,
+			pClient->GetProfile()->sPcProfile.avatarAttribute.dwBaseMaxLP,
 			pClient->GetProfile()->sPcProfile.wCurEP,
 			pClient->GetProfile()->sPcProfile.avatarAttribute.wBaseMaxEP,
 			pClient->GetProfile()->GetSerialID());
@@ -99,17 +99,6 @@ bool CharacterManager::FindClient(GameClient* pClient)
 		}
 	}
 	return false;
-}
-
-void CharacterManager::SendAll2(void* pData, int nSize, GameClient* pClient)
-{
-	for (cliIt it = cList.begin(); it != cList.end(); ++it)
-	{
-		if (pClient->GetHandle() == it->second->GetHandle())
-			it->second->PushPacket(pData, nSize);
-		else if (pClient->FindSpawn(it->second->GetHandle(), 0))
-			it->second->PushPacket(pData, nSize);
-	}
 }
 
 void CharacterManager::SendAll(void* pData, int nSize)

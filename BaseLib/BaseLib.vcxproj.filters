@@ -127,11 +127,11 @@
     <Filter Include="Header Files\Table\Rule">
       <UniqueIdentifier>{d379065c-dcf6-4086-bef5-ad57372d97c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Logic">
-      <UniqueIdentifier>{8049b7da-2352-49d8-9a15-e8f1c65214a1}</UniqueIdentifier>
+    <Filter Include="Header Files\Table\TwTable">
+      <UniqueIdentifier>{41a1a04e-74ac-40e5-bf85-98d2f60e8b20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Logic">
-      <UniqueIdentifier>{b27dcb4d-0441-4bf0-b3b1-d7ada3eda732}</UniqueIdentifier>
+    <Filter Include="Source Files\Table\TwTable">
+      <UniqueIdentifier>{b9b34f8f-0ed6-4ea0-8d37-e8c36b57419e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -519,11 +519,20 @@
     <ClCompile Include="NtlStringHandler.cpp">
       <Filter>Source Files\GameLib</Filter>
     </ClCompile>
-    <ClCompile Include="NtlAvatar.cpp">
-      <Filter>Source Files\GameLib</Filter>
+    <ClCompile Include="TableReader.cpp">
+      <Filter>Source Files\Table\TwTable</Filter>
     </ClCompile>
-    <ClCompile Include="Logic.cpp">
-      <Filter>Source Files\Logic</Filter>
+    <ClCompile Include="TwPC.cpp">
+      <Filter>Source Files\Table\TwTable</Filter>
+    </ClCompile>
+    <ClCompile Include="TwNewbieTable.cpp">
+      <Filter>Source Files\Table\TwTable</Filter>
+    </ClCompile>
+    <ClCompile Include="TwWorldTable.cpp">
+      <Filter>Source Files\Table\TwTable</Filter>
+    </ClCompile>
+    <ClCompile Include="TwTableAll.cpp">
+      <Filter>Source Files\Table\TwTable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1049,8 +1058,20 @@
     <ClInclude Include="TableAll.h">
       <Filter>Header Files\Table</Filter>
     </ClInclude>
-    <ClInclude Include="Logic.h">
-      <Filter>Header Files\Logic</Filter>
+    <ClInclude Include="TableReader.h">
+      <Filter>Header Files\Table\TwTable</Filter>
+    </ClInclude>
+    <ClInclude Include="TwPC.h">
+      <Filter>Header Files\Table\TwTable</Filter>
+    </ClInclude>
+    <ClInclude Include="TwNewbieTable.h">
+      <Filter>Header Files\Table\TwTable</Filter>
+    </ClInclude>
+    <ClInclude Include="TwWorldTable.h">
+      <Filter>Header Files\Table\TwTable</Filter>
+    </ClInclude>
+    <ClInclude Include="TwTableAll.h">
+      <Filter>Header Files\Table\TwTable</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

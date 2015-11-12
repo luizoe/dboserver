@@ -97,7 +97,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AttributeManager.cpp" />
     <ClCompile Include="CharacterManager.cpp" />
     <ClCompile Include="CharacterProfile.cpp" />
     <ClCompile Include="GameClient.cpp" />
@@ -115,7 +114,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AttributeManager.h" />
     <ClInclude Include="CharacterManager.h" />
     <ClInclude Include="CharacterProfile.h" />
     <ClInclude Include="GameProtocol.h" />

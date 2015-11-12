@@ -268,12 +268,17 @@ enum eEQUIP_SLOT_TYPE
 	EQUIP_SLOT_TYPE_EARRING_2,
 	EQUIP_SLOT_TYPE_RING_1,
 	EQUIP_SLOT_TYPE_RING_2,
+	EQUIP_SLOT_TYPE_DOGI,
+	EQUIP_SLOT_TYPE_HAIR,
+	EQUIP_SLOT_TYPE_ACCESSORY_1,
+	EQUIP_SLOT_TYPE_ACCESSORY_2,
+	EQUIP_SLOT_TYPE_ACCESSORY_3,
 
 	EQUIP_SLOT_TYPE_COUNT,
 	EQUIP_SLOT_TYPE_UNKNOWN	= 0xFF,
 
 	EQUIP_SLOT_TYPE_FIRST	= EQUIP_SLOT_TYPE_HAND,
-	EQUIP_SLOT_TYPE_LAST	= EQUIP_SLOT_TYPE_RING_2,
+	EQUIP_SLOT_TYPE_LAST	= EQUIP_SLOT_TYPE_COUNT - 1,
 };
 
 //-----------------------------------------------------------------------------------
@@ -804,9 +809,9 @@ const int			NTL_MAX_SELL_SHOPPING_CART	= 12;  // 쇼핑카트의 팔수있는 �
 
 const int			NTL_MAX_SHOPPING_CART		= ( (NTL_MAX_BUY_SHOPPING_CART * sizeof(sSHOP_BUY_CART) ) + (NTL_MAX_SELL_SHOPPING_CART * sizeof(sSHOP_SELL_CART) ) );  // 쇼핑카트의 최대 크기
 
-const int			NTL_MAX_NEWBIE_ITEM			= 8;  // 생성시 부여가능 최대 아이템
+const int			NTL_MAX_NEWBIE_ITEM			= 10;  // 생성시 부여가능 최대 아이템
 
-const int			NTL_MAX_NEWBIE_SKILL		= 3;  // 생성시 부여가능 최대 스킬
+const int			NTL_MAX_NEWBIE_SKILL		= 7;  // 생성시 부여가능 최대 스킬
 
 const int			NTL_MAX_SCOUTER_WATT		= 1000;
 
@@ -853,7 +858,8 @@ struct sHOIPOIMIX_DATA
 	BYTE			bySpecialType;	// eRECIPE_TYPE
 
 	BYTE			byMixLevel;
-	DWORD			dwMixExp;
+	WORD			wMixExp;
+	WORD			wUnknow;
 	
 	//BYTE			byNormalLevel;	 
 	//DWORD			dwNormalExp;
@@ -981,7 +987,6 @@ struct sITEM_SUMMARY
 	BYTE			byRank;
 	BYTE			byGrade;
 	BYTE			byBattleAttribute;
-	TBLIDX			aOptionTblidx[NTL_MAX_OPTION_IN_ITEM];
 };
 
 // 아이템 상태

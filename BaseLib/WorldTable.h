@@ -71,6 +71,67 @@ protected:
 		return sizeof(*this) - sizeof(void*);
 	}
 };
+
+struct sWORLD_TBLDAT2
+{
+public:
+	TBLIDX			tblidx;
+	char			szName[DBO_MAX_LENGTH_WORLD_NAME + 1];
+	WCHAR			wszName[DBO_MAX_LENGTH_WORLD_NAME_IN_UNICODE + 1];
+	bool			bDynamic;
+	int				nCreateCount;
+
+	TBLIDX			unknownTblidx;
+
+	BYTE			byDoorType;
+
+	DWORD			dwDestroyTimeInMilliSec;
+
+	WCHAR			wszMobSpawn_Table_Name[DBO_MAX_LENGTH_WORLD_MOB_SPAWN_TABLE_NAME + 1];
+	WCHAR			wszNpcSpawn_Table_Name[DBO_MAX_LENGTH_WORLD_NPC_SPAWN_TABLE_NAME + 1];
+	WCHAR			wszObjSpawn_Table_Name[DBO_MAX_LENGTH_WORLD_OBJ_SPAWN_TABLE_NAME + 1];
+
+	CNtlVector		vStart;
+	CNtlVector		vEnd;
+	CNtlVector		vStandardLoc;
+	CNtlVector		vBattleStartLoc;
+	CNtlVector		vBattleEndLoc;
+	CNtlVector		vOutSideBattleStartLoc;
+	CNtlVector		vOutSideBattleEndLoc;
+	CNtlVector		vSpectatorStartLoc;
+	CNtlVector		vSpectatorEndLoc;
+	CNtlVector		vDefaultLoc;
+	CNtlVector		vDefaultDir;
+	CNtlVector		vStart1Loc;
+	CNtlVector		vStart1Dir;
+	CNtlVector		vStart2Loc;
+	CNtlVector		vStart2Dir;
+	CNtlVector unknown2[6];
+
+	float			fSplitSize;
+	bool			bNight_Able;
+	BYTE			byStatic_Time;
+	WORD			wFuncFlag;
+
+	BYTE			byWorldRuleType;	// eGAMERULE_TYPE
+	TBLIDX			worldRuleTbldx;		// 해당하는 룰 테이블 인덱스 ( 룰마다 테이블 틀림 : 랭크배틀/타임퀘스트/ 등등... )
+
+	TBLIDX			outWorldTblidx;
+	CNtlVector		outWorldLoc;
+	CNtlVector		outWorldDir;
+	WCHAR			wszResourceFolder[DBO_MAX_LENGTH_WORLD_RESOURCE_FOLDER_NAME + 1];
+	float			fBGMRestTime;
+	DWORD			dwWorldResourceID;
+	float			fFreeCamera_Height;
+
+	WCHAR			wszEnterResourceFlash[DBO_MAX_LENGTH_WORLD_RESOURCE_FLASH_NAME + 1];
+	WCHAR			wszLeaveResourceFlash[DBO_MAX_LENGTH_WORLD_RESOURCE_FLASH_NAME + 1];
+
+	TBLIDX			wpsLinkIndex;
+
+	BYTE			unknown3[11];
+	DWORD			unknown4;
+};
 #pragma pack(pop)
 
 class WorldTable : public Table

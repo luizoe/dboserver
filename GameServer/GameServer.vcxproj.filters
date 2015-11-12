@@ -63,9 +63,6 @@
     <ClCompile Include="NpcProfile.cpp">
       <Filter>Source Files\Profile</Filter>
     </ClCompile>
-    <ClCompile Include="AttributeManager.cpp">
-      <Filter>Source Files\Thread</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameProtocol.h">
@@ -85,9 +82,6 @@
     </ClInclude>
     <ClInclude Include="NpcProfile.h">
       <Filter>Header Files\Profile</Filter>
-    </ClInclude>
-    <ClInclude Include="AttributeManager.h">
-      <Filter>Header Files\Thread</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

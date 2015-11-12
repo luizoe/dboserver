@@ -48,7 +48,6 @@ int CharServer::OnCreate()
 	else
 		return 3;//ERR_TABLE_LOAD
 
-	m_uiSerialID = INVALID_DWORD;
 	return 0;
 }
 
@@ -66,49 +65,8 @@ int CharServer::OnAppStart()
 
 bool CharServer::LoadTableData()
 {
-	CNtlBitFlagManager flagManager;
-	if (false == flagManager.Create(TableContainer::TABLE_COUNT)) return false;
-
-	TableFileNameList fileNameList;
-	if (false == fileNameList.Create())	return false;
-
-	flagManager.Set(TableContainer::TABLE_WORLD);
-	flagManager.Set(TableContainer::TABLE_PC);
-	flagManager.Set(TableContainer::TABLE_MOB);
-	flagManager.Set(TableContainer::TABLE_NPC);
-	flagManager.Set(TableContainer::TABLE_ITEM);
-	flagManager.Set(TableContainer::TABLE_ITEM_OPTION);
-	flagManager.Set(TableContainer::TABLE_SKILL);
-	flagManager.Set(TableContainer::TABLE_NEWBIE);
-	flagManager.Set(TableContainer::TABLE_WORLD_MAP);
-	flagManager.Set(TableContainer::TABLE_WORLD_ZONE);
-	flagManager.Set(TableContainer::TABLE_FORMULA);
-	flagManager.Set(TableContainer::TABLE_EXP);
-
-	fileNameList.SetFileName(TableContainer::TABLE_WORLD, "Table_World_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_PC, "Table_PC_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_ITEM, "Table_Item_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_ITEM_OPTION, "Table_Item_Option_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_SKILL, "Table_Skill_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_NEWBIE, "Table_Newbie_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_WORLD_MAP, "Table_Worldmap_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_WORLD_ZONE, "Table_World_Zone_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_FORMULA, "TD_Formula");
-	fileNameList.SetFileName(TableContainer::TABLE_GAME_MANIA_TIME, "Table_GameManiaTime_Data");
-	fileNameList.SetFileName(TableContainer::TABLE_EXP, "table_exp_data");
-
-	m_pTableContainer = new TableContainer();
-
-	return m_pTableContainer->Create(flagManager, gameDataPath, &fileNameList, eLOADING_METHOD::LOADING_METHOD_SECURED_BINARY, GetACP(), NULL);
-}
-
-unsigned int CharServer::AcquireSerialID()
-{
-	if (m_uiSerialID++)
-	{
-		if (m_uiSerialID == INVALID_DWORD)
-			m_uiSerialID = 0;
-	}
-
-	return m_uiSerialID;
+	m_pTwTableAll = new TwTableAll();
+	m_pTwTableAll->SetPath("C:/Games/DBOProject/Snaity/dboservetw/TwTables/decrypted");
+	m_pTwTableAll->LoadTables();
+	return true;
 }

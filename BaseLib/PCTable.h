@@ -9,7 +9,7 @@ const DWORD		DBO_MAX_LENGTH_MODEL_NAME = 32;
 struct sCHAR_TBLDAT : public sTBLDAT
 {
 public:
-	WORD			wBasic_LP;
+	DWORD			wBasic_LP;
 	WORD			wBasic_EP;
 	WORD			wBasic_Physical_Defence;
 	WORD			wBasic_Energy_Defence;
@@ -51,6 +51,8 @@ public:
 	float			fAdult_Run_Speed_Origin;
 	float			fAdult_Run_Speed;
 
+	float unknown1[12];
+
 	WORD			wBasic_RP;
 	WORD			wBasic_Physical_Offence;
 	WORD			wBasic_Energy_Offence;
@@ -61,6 +63,8 @@ public:
 	BYTE			byLevel_Up_Physical_Defence;
 	BYTE			byLevel_Up_Energy_Offence;
 	BYTE			byLevel_Up_Energy_Defence;
+
+	DWORD unknown2;
 
 	float			fLevel_Up_Str;
 	float			fLevel_Up_Con;
@@ -75,6 +79,47 @@ protected:
 	{
 		return sizeof(*this) - sizeof(void*);
 	}
+};
+
+struct sPC_TBLDAT2
+{
+public:
+	TBLIDX			tblidx;
+	sCHAR_TBLDAT	sCharProfile;
+	BYTE			byRace;
+	BYTE			byGender;
+	BYTE			byClass;
+	TBLIDX			prior_Class_Tblidx;
+	DWORD			dwClass_Bit_Flag;
+	char			szModel_Child[NTL_MAX_LENGTH_MODEL_NAME + 1];
+	char			szModel_Adult[NTL_MAX_LENGTH_MODEL_NAME + 1];
+
+	float			fChild_Run_Speed_Origin;
+	float			fChild_Run_Speed;
+	float			fAdult_Run_Speed_Origin;
+	float			fAdult_Run_Speed;
+
+	float unknown1[12];
+
+	WORD			wBasic_RP;
+	WORD			wBasic_Physical_Offence;
+	WORD			wBasic_Energy_Offence;
+	BYTE			byLevel_Up_LP;
+	BYTE			byLevel_Up_EP;
+	BYTE			byLevel_Up_RP;
+	BYTE			byLevel_Up_Physical_Offence;
+	BYTE			byLevel_Up_Physical_Defence;
+	BYTE			byLevel_Up_Energy_Offence;
+	BYTE			byLevel_Up_Energy_Defence;
+
+	DWORD unknown2;
+
+	float			fLevel_Up_Str;
+	float			fLevel_Up_Con;
+	float			fLevel_Up_Foc;
+	float			fLevel_Up_Dex;
+	float			fLevel_Up_Sol;
+	float			fLevel_Up_Eng;
 };
 #pragma pack(pop)
 

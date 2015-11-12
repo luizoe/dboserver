@@ -5,7 +5,6 @@ CharacterProfile::CharacterProfile(GameClient* pClient)
 {
 	this->pServer = (GameServer*)_GetApp();
 	this->pClient = pClient;
-	this->pAttributeManager = new AttributeManager();
 	dwLastAttack = 0;
 }
 
@@ -39,156 +38,19 @@ void CharacterProfile::UpdateCharLevel()
 
 void CharacterProfile::LoadWarFogFlags()
 {
-	memset(&acWarFogFlag, 0, NTL_MAX_SIZE_WAR_FOG);
+	memset(&acWarFogFlag, 0xFF, NTL_MAX_SIZE_WAR_FOG);
 	// NEED MORE RESEARCH
-	if (pServer->ServerDB->ExecuteSelect("SELECT `Object` FROM `warfog` WHERE `CharID` = '%u';", hCharID))
+	/*if (pServer->ServerDB->ExecuteSelect("SELECT `Object` FROM `warfog` WHERE `CharID` = '%u';", hCharID))
 	{
 		while (pServer->ServerDB->Fetch())
 		{
 			HOBJECT Obj = pServer->ServerDB->getInt("Object");
-			if (pServer->GetObjectManager()->FindObject(Obj, eOBJTYPE::OBJTYPE_TOBJECT))
-			{
-				TBLIDX contentsTblix = pServer->GetObjectManager()->objMapList.find(Obj)->second->contentsTblidx;
-				if (contentsTblix > NTL_MAX_COUNT_WAR_FOG)
-					return;
-				int uiArrayPos = contentsTblix / 8;
-				BYTE byCurBit = (BYTE)(contentsTblix % 8);
+			int uiArrayPos = Obj / 8;
+			BYTE byCurBit = (BYTE)(Obj % 8);
 
-				acWarFogFlag[uiArrayPos] |= 0x01ui8 << byCurBit;
-			}
+			acWarFogFlag[uiArrayPos] |= 0x01ui8 << byCurBit;
 		}
-	}
-}
-/*
-This method need return only the bag available to use
-if the user have the bag then return only
-Luiz45
-*/
-int CharacterProfile::ScanForFreeBag()
-{
-	int iAvaibleBag = 0;
-	for (int i = 0; i < NTL_MAX_COUNT_USER_HAVE_INVEN_ITEM; i++)
-	{
-		if (this->asItemProfile[i].byPlace == CONTAINER_TYPE_BAGSLOT)
-		{
-			sITEM_TBLDAT* pItemTbl = reinterpret_cast<sITEM_TBLDAT*>(pServer->GetTableContainer()->GetItemTable()->FindData(this->asItemProfile[i].tblidx));
-			//Main Bag
-			if (this->asItemProfile[i].byPos == (CONTAINER_TYPE_BAG1 - 1))
-			{
-				if (this->ScanForFreePosition(CONTAINER_TYPE_BAG1) >= pItemTbl->byBag_Size)
-					continue;
-				else{
-					iAvaibleBag = CONTAINER_TYPE_BAG1;
-					break;
-				}
-			}
-			//Secondary Bag
-			else if (this->asItemProfile[i].byPos == (CONTAINER_TYPE_BAG2 - 1))
-			{
-				if (this->ScanForFreePosition(CONTAINER_TYPE_BAG2) >= pItemTbl->byBag_Size)
-					continue;
-				else{
-					iAvaibleBag = CONTAINER_TYPE_BAG2;
-					break;
-				}
-			}
-			//Third Bag
-			else if (this->asItemProfile[i].byPos == (CONTAINER_TYPE_BAG3 - 1))
-			{
-				if (this->ScanForFreePosition(CONTAINER_TYPE_BAG3) >= pItemTbl->byBag_Size)
-					continue;
-				else{
-					iAvaibleBag = CONTAINER_TYPE_BAG3;
-					break;
-				}
-			}
-			//Fourth Bag
-			else if (this->asItemProfile[i].byPos == (CONTAINER_TYPE_BAG4 - 1))
-			{
-				if (this->ScanForFreePosition(CONTAINER_TYPE_BAG4) >= pItemTbl->byBag_Size)
-					continue;
-				else{
-					iAvaibleBag = CONTAINER_TYPE_BAG4;
-					break;
-				}
-			}
-			//Five Bag
-			else if (this->asItemProfile[i].byPos == (CONTAINER_TYPE_BAG5 - 1))
-			{
-				if (this->ScanForFreePosition(CONTAINER_TYPE_BAG5) >= pItemTbl->byBag_Size)
-					continue;
-				else{
-					iAvaibleBag = CONTAINER_TYPE_BAG5;
-					break;
-				}
-			}
-		}
-	}
-
-	return (iAvaibleBag == 0 ? 99 : iAvaibleBag);
-}
-void CharacterProfile::insertItemIntoInventory(sITEM_DATA& sItemData, HOBJECT itemHandle)
-{
-	for (int i = 0; i < NTL_MAX_COUNT_USER_HAVE_INVEN_ITEM; i++)
-	{
-		if (asItemProfile[i].handle == INVALID_TBLIDX)
-		{
-			asItemProfile[i].handle = itemHandle;
-			asItemProfile[i].aOptionTblidx[0] = sItemData.aOptionTblidx[0];
-			asItemProfile[i].aOptionTblidx[1] = sItemData.aOptionTblidx[1];
-			asItemProfile[i].bNeedToIdentify = sItemData.bNeedToIdentify;
-			asItemProfile[i].byGrade = sItemData.byGrade;
-			asItemProfile[i].byPos = sItemData.byPosition;
-			asItemProfile[i].byPlace = sItemData.byPlace;
-			asItemProfile[i].byCurDur = sItemData.byCurrentDurability;
-			asItemProfile[i].byBattleAttribute = sItemData.byBattleAttribute;
-			asItemProfile[i].byDurationType = sItemData.byDurationType;
-			asItemProfile[i].byStackcount = sItemData.byStackcount;
-			asItemProfile[i].byRestrictType = sItemData.byRestrictType;
-			asItemProfile[i].tblidx = sItemData.itemId;
-			return;
-		}
-	}
-}
-/*
-This method receive the Bag container to check if have any slot available
-he will check the slots stored in our struct sItemBrief...
-by Luiz45
-*/
-int CharacterProfile::ScanForFreePosition(DWORD dwBag)
-{
-	int iAvaibleSlot = 0;
-	int iOccupedSlot = 0;
-	int iMaxBagSz = 0;	
-	int arInventSlot[NTL_MAX_BAG_ITEM_SLOT] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	for (int i = 0; i < NTL_MAX_COUNT_USER_HAVE_INVEN_ITEM; i++)
-	{
-		if (asItemProfile[i].byPlace == CONTAINER_TYPE_BAGSLOT)
-		{
-			//Its because we have 5 bags and in the game he identify by CONTAINER TYPE BAGSLOT
-			if (asItemProfile[i].byPos == (dwBag - 1))
-			{
-				sITEM_TBLDAT* pItemTbl = reinterpret_cast<sITEM_TBLDAT*>(pServer->GetTableContainer()->GetItemTable()->FindData(asItemProfile[i].tblidx));
-				iMaxBagSz = pItemTbl->byBag_Size;
-			}
-		}
-		else if (asItemProfile[i].byPlace == dwBag)
-		{
-
-			if (asItemProfile[i].handle != 0)
-			{
-				iOccupedSlot = asItemProfile[i].byPos;
-				arInventSlot[iOccupedSlot] = 1;
-			}
-		}
-	}
-	for (int p = 0; p < NTL_MAX_BAG_ITEM_SLOT; p++)
-	{
-		if (arInventSlot[p] == 0)
-			return p;
-		else if ((NTL_MAX_BAG_ITEM_SLOT - 1) == (p))
-			return iMaxBagSz;
-	}
+	}*/
 }
 
 bool CharacterProfile::CheckWarFogFlags(HOBJECT hObject)
@@ -241,7 +103,7 @@ void CharacterProfile::GetItemBrief(sITEM_BRIEF& sBrief, HOBJECT hItem)
 
 void CharacterProfile::UpdateItemInventoryPosition(HOBJECT hItem, BYTE byPlace, BYTE byPos)
 {
-	pServer->ServerDB->ExecuteQuery("UPDATE `inventory` SET `Place` = '%d', `Slot` = '%d' WHERE `ItemSerialID` = '%u' AND `CharID` = '%u';",
+	pServer->ServerDB->ExecuteQuery("UPDATE `inventory` SET `Place` = '%d', `Slot` = '%d' WHERE `ID` = '%u' AND `CharID` = '%u';",
 		byPlace, byPos, hItem, hCharID);
 	for (int i = 0; i < NTL_MAX_COUNT_USER_HAVE_INVEN_ITEM; ++i)
 	{
@@ -256,37 +118,17 @@ void CharacterProfile::UpdateItemInventoryPosition(HOBJECT hItem, BYTE byPlace, 
 HOBJECT CharacterProfile::GetInventoryItemSerialID(BYTE byPlace, BYTE byPos)
 {
 	HOBJECT ret = INVALID_HOBJECT;
-	if (pServer->ServerDB->ExecuteSelect("SELECT `ItemSerialID` FROM `inventory` WHERE `Place` = '%d' AND `Slot` = '%d' AND `CharID` = '%u';",
+	if (pServer->ServerDB->ExecuteSelect("SELECT `ID` FROM `inventory` WHERE `Place` = '%d' AND `Slot` = '%d' AND `CharID` = '%u';",
 		byPlace, byPos, hCharID))
 	{
 		while (pServer->ServerDB->Fetch())
 		{
-			ret = pServer->ServerDB->getInt("ItemSerialID");
+			ret = pServer->ServerDB->getInt("ID");
 		}
 	}
 	return ret;
 }
-//By Luiz45 Get Item Stack count by handle
-BYTE CharacterProfile::GetStackCount(HOBJECT itemSerialID)
-{
-	for (int i = 0; i < sizeof(asItemProfile); i++)
-	{
-		if (asItemProfile[i].handle == itemSerialID)
-			return asItemProfile[i].byStackcount;
-	}
-	return 0;
-}
 
-bool CharacterProfile::ExistItemInGame(HOBJECT hItemObject)
-{
-	bool bExist = false;
-	if (pServer->ServerDB->ExecuteSelect("SELECT * FROM `inventory` WHERE `ItemSerialID` = '%d';", hItemObject))
-	{
-		if (pServer->ServerDB->rowsCount() > 0)
-			bExist = true;
-	}
-	return bExist;
-}
 TBLIDX CharacterProfile::GetInventoryItemID(BYTE byPlace, BYTE byPos)
 {
 	TBLIDX ret = INVALID_TBLIDX;
@@ -325,29 +167,6 @@ int CharacterProfile::LoadQuickslotData()
 			asQuickSlotData[count].byType = pServer->ServerDB->getInt("Type");
 			asQuickSlotData[count].hItem = pServer->ServerDB->getInt("Item");
 			count++;
-		}
-	}
-	return count;
-}
-
-int CharacterProfile::LoadHTBData()
-{
-	int count = 0;
-	if (pServer->ServerDB->ExecuteSelect("SELECT * FROM `skills` WHERE `CharID`='%u';", this->hCharID))
-	{
-		while (pServer->ServerDB->Fetch())
-		{
-			sSKILL_TBLDAT* pSkillData = reinterpret_cast<sSKILL_TBLDAT*>(pServer->GetTableContainer()->GetSkillTable()->FindData(pServer->ServerDB->getInt("SkillID")));
-			if (pSkillData)
-			{
-				if (pSkillData->bySkill_Class == NTL_SKILL_CLASS_HTB)
-				{
-					asHTBInfo[count].skillId = pServer->ServerDB->getInt("SkillID");
-					asHTBInfo[count].dwTimeRemaining = pServer->ServerDB->getInt("RemainSec");
-					asHTBInfo[count].bySlotId = pServer->ServerDB->getInt("Slot");
-					count++;
-				}
-			}			
 		}
 	}
 	return count;
@@ -433,9 +252,8 @@ bool CharacterProfile::InsertNextBagSlot(sGU_ITEM_CREATE& sPacket, ITEMID item, 
 		if (asItemProfile[i].handle == INVALID_HOBJECT && asItemProfile[i].tblidx == INVALID_TBLIDX)
 		{
 			// (nItemID,nCharID,nPlace,nSlot,nStack,nRank,nCurDur,nNeedToIdentify,nGrade,nBattleAttribute,nRestrictType,nMaker,nOpt1,nOpt2,nDurationType);
-			HOBJECT handleItem = pServer->AcquireSerialID();
-			if (pServer->ServerDB->ExecuteSp("CALL `spInsertItem`('%u','%u','%d','%d','%d','%d','%d','0','0','%d','0','','%u','0','%d','%d');",
-				item, hCharID, lastbag, lastbagslot, qtd, sItem->byRank, sItem->byDurability, sItem->byBattle_Attribute, sItem->Item_Option_Tblidx, sItem->byDurationType, handleItem))
+			if (pServer->ServerDB->ExecuteSp("CALL `spInsertItem`('%u','%u','%d','%d','%d','%d','%d','0','0','%d','0','','%u','0','%d');",
+				item, hCharID, lastbag, lastbagslot, qtd, sItem->byRank, sItem->byDurability, sItem->byBattle_Attribute, sItem->Item_Option_Tblidx, sItem->byDurationType))
 			{
 				do {
 					pServer->ServerDB->GetResultSet();
@@ -447,7 +265,7 @@ bool CharacterProfile::InsertNextBagSlot(sGU_ITEM_CREATE& sPacket, ITEMID item, 
 
 			sPacket.bIsNew = true;
 			sPacket.wOpCode = GU_ITEM_CREATE;
-			sPacket.handle = handleItem;
+			sPacket.handle = hItem;
 			sPacket.sItemData.itemId = hItem;
 			sPacket.sItemData.charId = hCharID;
 			sPacket.sItemData.itemNo = item;
@@ -462,7 +280,7 @@ bool CharacterProfile::InsertNextBagSlot(sGU_ITEM_CREATE& sPacket, ITEMID item, 
 			sPacket.sItemData.byDurationType = sItem->byDurationType;
 			sPacket.sItemData.byGrade = 0;
 
-			asItemProfile[i].handle = handleItem;
+			asItemProfile[i].handle = sPacket.sItemData.itemId;
 			asItemProfile[i].tblidx = item;
 			asItemProfile[i].byCurDur = sPacket.sItemData.byCurrentDurability;
 			asItemProfile[i].byPlace = sPacket.sItemData.byPlace;
@@ -494,8 +312,7 @@ int CharacterProfile::LoadItemData()
 	{
 		while (pServer->ServerDB->Fetch())
 		{
-			HOBJECT serialItem = pServer->ServerDB->getInt("ItemSerialID");
-			asItemProfile[count].handle = serialItem;
+			asItemProfile[count].handle = pServer->ServerDB->getInt("ID");
 			asItemProfile[count].tblidx = pServer->ServerDB->getInt("ItemID");
 			asItemProfile[count].byPlace = pServer->ServerDB->getInt("Place");
 			asItemProfile[count].byPos = pServer->ServerDB->getInt("Slot");
@@ -512,10 +329,6 @@ int CharacterProfile::LoadItemData()
 			asItemProfile[count].byDurationType = pServer->ServerDB->getInt("DurationType");
 			asItemProfile[count].nUseStartTime = pServer->ServerDB->getInt("UseStartTime");
 			asItemProfile[count].nUseEndTime = pServer->ServerDB->getInt("UseEndTime");
-			if (serialItem > pServer->m_uiSerialID)
-			{
-				pServer->m_uiSerialID = pServer->ServerDB->getInt("ItemSerialID");
-			}
 			count++;
 		}
 	}
@@ -548,7 +361,7 @@ void CharacterProfile::LoadWorldInfoData()
 		{
 			sWorldInfo.tblidx = pServer->ServerDB->getInt("worldTblidx");
 			sWorldInfo.worldID = pServer->ServerDB->getInt("worldId");
-			sWorldInfo.hTriggerObjectOffset = 100000; // WHAT IS THIS??
+			sWorldInfo.hTriggerObjectOffset = 133000; // WHAT IS THIS??
 			sWorldInfo.sRuleInfo.byRuleType = GAMERULE_NORMAL;
 		}
 	}
@@ -561,14 +374,14 @@ void CharacterProfile::CalculateAtributes()
 	if (pPcTbl)
 	{
 		sPcProfile.avatarAttribute.wBaseMaxEP = pPcTbl->wBasic_EP;
-		sPcProfile.avatarAttribute.wBaseMaxLP = pPcTbl->wBasic_LP;
+		sPcProfile.avatarAttribute.dwBaseMaxLP = pPcTbl->wBasic_LP;
 		sPcProfile.avatarAttribute.wBaseMaxRP = pPcTbl->wBasic_RP;
-		sPcProfile.avatarAttribute.byBaseStr = pPcTbl->byStr;
-		sPcProfile.avatarAttribute.byBaseFoc = pPcTbl->byFoc;
-		sPcProfile.avatarAttribute.byBaseSol = pPcTbl->bySol;
-		sPcProfile.avatarAttribute.byBaseDex = pPcTbl->byDex;
-		sPcProfile.avatarAttribute.byBaseCon = pPcTbl->byCon;
-		sPcProfile.avatarAttribute.byBaseEng = pPcTbl->byEng;
+		sPcProfile.avatarAttribute.wBaseStr = pPcTbl->byStr;
+		sPcProfile.avatarAttribute.wBaseFoc = pPcTbl->byFoc;
+		sPcProfile.avatarAttribute.wBaseSol = pPcTbl->bySol;
+		sPcProfile.avatarAttribute.wBaseDex = pPcTbl->byDex;
+		sPcProfile.avatarAttribute.wBaseCon = pPcTbl->byCon;
+		sPcProfile.avatarAttribute.wBaseEng = pPcTbl->byEng;
 		sPcProfile.avatarAttribute.fBaseAttackRange = pPcTbl->fAttack_Range;
 		sPcProfile.avatarAttribute.wBaseAttackRate = pPcTbl->wAttack_Rate;
 		sPcProfile.avatarAttribute.wBaseAttackSpeedRate = pPcTbl->wAttack_Speed_Rate;
@@ -582,27 +395,27 @@ void CharacterProfile::CalculateAtributes()
 		sPcProfile.avatarAttribute.wBaseEnergyDefence = (pPcTbl->byLevel_Up_Energy_Defence * sPcProfile.byLevel);
 
 		sPcProfile.avatarAttribute.wBaseMaxEP += (pPcTbl->byLevel_Up_EP * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.wBaseMaxLP += (pPcTbl->byLevel_Up_LP * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.dwBaseMaxLP += (pPcTbl->byLevel_Up_LP * sPcProfile.byLevel);
 		sPcProfile.avatarAttribute.wBaseMaxRP += (pPcTbl->byLevel_Up_RP * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.byBaseStr += (BYTE)(pPcTbl->fLevel_Up_Str * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.byBaseDex += (BYTE)(pPcTbl->fLevel_Up_Dex * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.byBaseFoc += (BYTE)(pPcTbl->fLevel_Up_Foc * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.byBaseEng += (BYTE)(pPcTbl->fLevel_Up_Eng * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.byBaseCon += (BYTE)(pPcTbl->fLevel_Up_Con * sPcProfile.byLevel);
-		sPcProfile.avatarAttribute.byBaseSol += (BYTE)(pPcTbl->fLevel_Up_Sol * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.wBaseStr += (BYTE)(pPcTbl->fLevel_Up_Str * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.wBaseDex += (BYTE)(pPcTbl->fLevel_Up_Dex * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.wBaseFoc += (BYTE)(pPcTbl->fLevel_Up_Foc * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.wBaseEng += (BYTE)(pPcTbl->fLevel_Up_Eng * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.wBaseCon += (BYTE)(pPcTbl->fLevel_Up_Con * sPcProfile.byLevel);
+		sPcProfile.avatarAttribute.wBaseSol += (BYTE)(pPcTbl->fLevel_Up_Sol * sPcProfile.byLevel);
 
-		sPcProfile.avatarAttribute.wBaseMaxLP += (WORD)((sPcProfile.avatarAttribute.byBaseCon * sPcProfile.byLevel) * 4.7);
-		sPcProfile.avatarAttribute.wBaseMaxEP += (WORD)((sPcProfile.avatarAttribute.byBaseEng * sPcProfile.byLevel) * 4.7);
+		sPcProfile.avatarAttribute.dwBaseMaxLP += (WORD)((sPcProfile.avatarAttribute.wBaseCon * sPcProfile.byLevel) * 4.7);
+		sPcProfile.avatarAttribute.wBaseMaxEP += (WORD)((sPcProfile.avatarAttribute.wBaseEng * sPcProfile.byLevel) * 4.7);
 
 		sPcProfile.avatarAttribute.wLastMaxEP = sPcProfile.avatarAttribute.wBaseMaxEP;
-		sPcProfile.avatarAttribute.wLastMaxLP = sPcProfile.avatarAttribute.wBaseMaxLP;
+		sPcProfile.avatarAttribute.dwLastMaxLP = sPcProfile.avatarAttribute.dwBaseMaxLP;
 		sPcProfile.avatarAttribute.wLastMaxRP = sPcProfile.avatarAttribute.wBaseMaxRP;
-		sPcProfile.avatarAttribute.byLastStr = sPcProfile.avatarAttribute.byBaseStr;
-		sPcProfile.avatarAttribute.byLastDex = sPcProfile.avatarAttribute.byBaseDex;
-		sPcProfile.avatarAttribute.byLastFoc = sPcProfile.avatarAttribute.byBaseFoc;
-		sPcProfile.avatarAttribute.byLastEng = sPcProfile.avatarAttribute.byBaseEng;
-		sPcProfile.avatarAttribute.byLastCon = sPcProfile.avatarAttribute.byBaseCon;
-		sPcProfile.avatarAttribute.byLastSol = sPcProfile.avatarAttribute.byBaseSol;
+		sPcProfile.avatarAttribute.wLastStr = sPcProfile.avatarAttribute.wBaseStr;
+		sPcProfile.avatarAttribute.wLastDex = sPcProfile.avatarAttribute.wBaseDex;
+		sPcProfile.avatarAttribute.wLastFoc = sPcProfile.avatarAttribute.wBaseFoc;
+		sPcProfile.avatarAttribute.wLastEng = sPcProfile.avatarAttribute.wBaseEng;
+		sPcProfile.avatarAttribute.wLastCon = sPcProfile.avatarAttribute.wBaseCon;
+		sPcProfile.avatarAttribute.wLastSol = sPcProfile.avatarAttribute.wBaseSol;
 		sPcProfile.avatarAttribute.wLastPhysicalOffence = sPcProfile.avatarAttribute.wBasePhysicalOffence;
 		sPcProfile.avatarAttribute.wLastPhysicalDefence = sPcProfile.avatarAttribute.wBasePhysicalDefence;
 		sPcProfile.avatarAttribute.wLastEnergyOffence = sPcProfile.avatarAttribute.wBaseEnergyOffence;
@@ -640,7 +453,7 @@ void CharacterProfile::LoadCharacterData()
 			sPcProfile.dwReputation = pServer->ServerDB->getInt("Reputation");
 			sPcProfile.dwMudosaPoint = pServer->ServerDB->getInt("MudosaPoint");
 			sPcProfile.dwSpPoint = pServer->ServerDB->getInt("SpPoint");
-			sPcProfile.sMarking.byCode = pServer->ServerDB->getInt("Marking");
+			sPcProfile.sMarking.dwCode = pServer->ServerDB->getInt("Marking");
 			sPcProfile.guildId = pServer->ServerDB->getInt("GuildID");
 
 			memset(&sCharState, 0, sizeof(sCharState));
@@ -673,7 +486,7 @@ void CharacterProfile::LoadCharacterData()
 				sPcProfile.tblidx = pPcTbl->tblidx;
 				sPcProfile.dwMaxExpInThisLevel = pExpTbl->dwNeed_Exp;
 				sPcProfile.wCurEP = pPcTbl->wBasic_EP;
-				sPcProfile.wCurLP = pPcTbl->wBasic_LP;
+				sPcProfile.dwCurLP = pPcTbl->wBasic_LP;
 				sPcProfile.wCurRP = pPcTbl->wBasic_RP;
 				sPcProfile.avatarAttribute.fLastRunSpeed = (sPcProfile.bIsAdult) ? pPcTbl->fAdult_Run_Speed : pPcTbl->fChild_Run_Speed;
 			}
@@ -692,12 +505,12 @@ void CharacterProfile::GetObjectCreate(sGU_OBJECT_CREATE& sPacket)
 	sPacket.sObjectInfo.pcBrief.byLevel = sPcProfile.byLevel;
 	sPacket.sObjectInfo.pcBrief.wAttackSpeedRate = sPcProfile.avatarAttribute.wLastAttackSpeedRate;
 	sPacket.sObjectInfo.pcBrief.wCurEP = sPcProfile.wCurEP;
-	sPacket.sObjectInfo.pcBrief.wCurLP = sPcProfile.wCurLP;
+	sPacket.sObjectInfo.pcBrief.wCurLP = sPcProfile.dwCurLP;
 	sPacket.sObjectInfo.pcBrief.wMaxEP = sPcProfile.avatarAttribute.wLastMaxEP;
-	sPacket.sObjectInfo.pcBrief.wMaxLP = sPcProfile.avatarAttribute.wLastMaxLP;
+	sPacket.sObjectInfo.pcBrief.wMaxLP = sPcProfile.avatarAttribute.dwLastMaxLP;
 	sPacket.sObjectInfo.pcBrief.fSpeed = sPcProfile.avatarAttribute.fLastRunSpeed;
 	memcpy(sPacket.sObjectInfo.pcBrief.awchName, sPcProfile.awchName, NTL_MAX_SIZE_CHAR_NAME_UNICODE);
-	sPacket.sObjectInfo.pcBrief.sMarking.byCode = sPcProfile.sMarking.byCode;
+	sPacket.sObjectInfo.pcBrief.sMarking.dwCode = sPcProfile.sMarking.dwCode;
 	sPacket.sObjectInfo.pcBrief.bIsAdult = sPcProfile.bIsAdult;
 	memcpy(&sPacket.sObjectInfo.pcBrief.sPcShape, &sPcProfile.sPcShape, sizeof(sPcProfile.sPcShape));
 	memcpy(&sPacket.sObjectInfo.pcState, &sCharState, sizeof(sCharState));
@@ -720,64 +533,4 @@ void CharacterProfile::GetObjectCreate(sGU_OBJECT_CREATE& sPacket)
 			sPacket.sObjectInfo.pcBrief.sItemBrief[slot].byRank = asItemProfile[i].byRank;
 		}
 	}
-}
-//By Luiz45 he will return the TBLIDX for skill else an invalid tblidx
-TBLIDX CharacterProfile::GetSkillBySlot(int iIdx)
-{
-	for (int i = 0; i < NTL_MAX_PC_HAVE_SKILL; i++)
-	{
-		if (asSkillInfo[i].bySlotId == iIdx)
-			return asSkillInfo[i].tblidx;
-	}
-	return INVALID_TBLIDX;
-}
-//By Luiz45 he will update Skill in the DBase and in our asSkillInfo list
-void CharacterProfile::UpdateSkill(TBLIDX tblBefore, TBLIDX tblNext)
-{
-	pServer->ServerDB->ExecuteQuery("UPDATE `skills` Set `SkillID`='%u' WHERE `SkillID`='%u' AND `CharID`='%u';", tblNext,tblBefore, GetCharID());
-	pServer->ServerDB->ExecuteQuery("UPDATE `character` Set `SpPoint`='%u' WHERE `CharID`='%u';", sPcProfile.dwSpPoint, GetCharID());
-	for (int i = 0; i < NTL_MAX_PC_HAVE_SKILL; i++)
-	{
-		if (asSkillInfo[i].tblidx == tblBefore)
-		{
-			asSkillInfo[i].tblidx = tblNext;
-			return;
-		}
-	}
-}
-//By Luiz45 update Stack Count in DB and in Inventory
-void CharacterProfile::UpdateStackCount(HOBJECT hItem, BYTE byStackCount)
-{
-	for (int i = 0; i < NTL_MAX_COUNT_USER_HAVE_INVEN_ITEM; i++)
-	{
-		if (asItemProfile[i].handle == hItem)
-		{
-			asItemProfile[i].byStackcount = byStackCount;
-			pServer->ServerDB->ExecuteQuery("UPDATE `inventory` Set `Stack` = '%u' WHERE `CharID`='%u' AND `ItemSerialID`='%u'", byStackCount, GetCharID(), hItem);
-			break;
-		}
-	}
-}
-//By Luiz45 Remove Item From Inventory and Delete from DB
-void CharacterProfile::RemoveItemFromInventory(HOBJECT hItem)
-{
-	for (int i = 0; i < NTL_MAX_COUNT_USER_HAVE_INVEN_ITEM; i++)
-	{
-		if (asItemProfile[i].handle == hItem)
-		{
-			asItemProfile[i].handle = INVALID_HOBJECT;
-			asItemProfile[i].byStackcount = 255;
-			asItemProfile[i].bNeedToIdentify = false;
-			asItemProfile[i].tblidx = INVALID_TBLIDX;
-			asItemProfile[i].byPlace = 255;
-			asItemProfile[i].byPos = 255;
-			pServer->ServerDB->ExecuteQuery("DELETE FROM `inventory` WHERE `CharID`='%u' AND `ItemSerialID`='%u'", GetCharID(), hItem);
-			break;
-		}
-	}
-}
-//By Luiz45 Update Money in Database
-void CharacterProfile::UpdateMoneyDataBase()
-{
-	pServer->ServerDB->ExecuteQuery("UPDATE `character` SET `Money`='%u' WHERE `ID`='%u' AND `AccID`='%u'",sPcProfile.dwZenny,GetCharID(),GetAccountid());
 }

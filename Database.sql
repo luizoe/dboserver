@@ -16,11 +16,11 @@ CREATE SCHEMA IF NOT EXISTS `dbo` DEFAULT CHARACTER SET utf8 ;
 USE `dbo` ;
 
 -- -----------------------------------------------------
--- Table `account`
+-- Table `dbo`.`account`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `account` ;
+DROP TABLE IF EXISTS `dbo`.`account` ;
 
-CREATE TABLE IF NOT EXISTS `account` (
+CREATE TABLE IF NOT EXISTS `dbo`.`account` (
   `ID` BIGINT UNSIGNED NULL AUTO_INCREMENT,
   `userName` VARCHAR(20) NOT NULL,
   `passWord` VARCHAR(20) NOT NULL,
@@ -35,36 +35,13 @@ ENGINE = InnoDB
 AUTO_INCREMENT = 9
 DEFAULT CHARACTER SET = utf8;
 
--- ----------------------------
--- Table structure for `blacklist`
--- ----------------------------
-DROP TABLE IF EXISTS `blacklist`;
-
-CREATE TABLE IF NOT EXISTS `blacklist` (
-  `pkID` int(11) NOT NULL AUTO_INCREMENT,
-  `owner_id` int(10) NOT NULL,
-  `target_id` int(10) NOT NULL,
-  PRIMARY KEY (`pkID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- -----------------------------------------------------
--- Table `buddylist`
+-- Table `dbo`.`character`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `dbo`.`character` ;
 
-DROP TABLE IF EXISTS `buddylist`;
-CREATE TABLE IF NOT EXISTS `friendlist` (
-  `pkID` int(11) NOT NULL AUTO_INCREMENT,
-  `owner_id` int(10) NOT NULL,
-  `friend_id` int(10) NOT NULL,  
-  PRIMARY KEY (`pkID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- -----------------------------------------------------
--- Table `character`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `character` ;
-
-CREATE TABLE IF NOT EXISTS `character` (
+CREATE TABLE IF NOT EXISTS `dbo`.`character` (
   `ID` BIGINT UNSIGNED NULL AUTO_INCREMENT,
   `AccID` BIGINT UNSIGNED NOT NULL DEFAULT '0',
   `GuildID` BIGINT NOT NULL DEFAULT '0',
@@ -109,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `character` (
   UNIQUE INDEX `ID_UNIQUE` (`ID` ASC),
   CONSTRAINT `fk_character_account_id`
     FOREIGN KEY (`AccID`)
-    REFERENCES `account` (`ID`)
+    REFERENCES `dbo`.`account` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -118,11 +95,11 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `inventory`
+-- Table `dbo`.`inventory`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `inventory` ;
+DROP TABLE IF EXISTS `dbo`.`inventory` ;
 
-CREATE TABLE IF NOT EXISTS `inventory` (
+CREATE TABLE IF NOT EXISTS `dbo`.`inventory` (
   `ID` BIGINT UNSIGNED NULL AUTO_INCREMENT,
   `CharID` BIGINT UNSIGNED NOT NULL,
   `ItemID` BIGINT UNSIGNED NOT NULL,
@@ -146,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `inventory` (
   UNIQUE INDEX `ID_UNIQUE` (`ID` ASC),
   CONSTRAINT `fk_inventory_character_id`
     FOREIGN KEY (`CharID`)
-    REFERENCES `character` (`ID`)
+    REFERENCES `dbo`.`character` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -155,11 +132,11 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `quickslot`
+-- Table `dbo`.`quickslot`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `quickslot` ;
+DROP TABLE IF EXISTS `dbo`.`quickslot` ;
 
-CREATE TABLE IF NOT EXISTS `quickslot` (
+CREATE TABLE IF NOT EXISTS `dbo`.`quickslot` (
   `ID` BIGINT UNSIGNED NULL AUTO_INCREMENT,
   `CharID` BIGINT UNSIGNED NOT NULL,
   `TblID` BIGINT UNSIGNED NOT NULL,
@@ -171,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `quickslot` (
   UNIQUE INDEX `ID_UNIQUE` (`ID` ASC),
   CONSTRAINT `fk_quickslot_character_id`
     FOREIGN KEY (`CharID`)
-    REFERENCES `character` (`ID`)
+    REFERENCES `dbo`.`character` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -180,11 +157,11 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `skills`
+-- Table `dbo`.`skills`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `skills` ;
+DROP TABLE IF EXISTS `dbo`.`skills` ;
 
-CREATE TABLE IF NOT EXISTS `skills` (
+CREATE TABLE IF NOT EXISTS `dbo`.`skills` (
   `ID` BIGINT UNSIGNED NULL AUTO_INCREMENT,
   `CharID` BIGINT UNSIGNED NOT NULL,
   `SkillID` BIGINT UNSIGNED NOT NULL,
@@ -198,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `skills` (
   UNIQUE INDEX `ID_UNIQUE` (`ID` ASC),
   CONSTRAINT `fk_character_id`
     FOREIGN KEY (`CharID`)
-    REFERENCES `character` (`ID`)
+    REFERENCES `dbo`.`character` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -207,11 +184,11 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `online`
+-- Table `dbo`.`online`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `online` ;
+DROP TABLE IF EXISTS `dbo`.`online` ;
 
-CREATE TABLE IF NOT EXISTS `online` (
+CREATE TABLE IF NOT EXISTS `dbo`.`online` (
   `AccountID` BIGINT UNSIGNED NOT NULL,
   `CharID` BIGINT UNSIGNED NOT NULL,
   `ServerID` INT NULL,
@@ -222,12 +199,12 @@ CREATE TABLE IF NOT EXISTS `online` (
   INDEX `fk_online_account_idx` (`AccountID` ASC),
   CONSTRAINT `fk_online_account_id`
     FOREIGN KEY (`AccountID`)
-    REFERENCES `account` (`ID`)
+    REFERENCES `dbo`.`account` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_online_character_id`
     FOREIGN KEY (`CharID`)
-    REFERENCES `character` (`ID`)
+    REFERENCES `dbo`.`character` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -235,11 +212,11 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `warfog`
+-- Table `dbo`.`warfog`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `warfog` ;
+DROP TABLE IF EXISTS `dbo`.`warfog` ;
 
-CREATE TABLE IF NOT EXISTS `warfog` (
+CREATE TABLE IF NOT EXISTS `dbo`.`warfog` (
   `ID` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   `CharID` BIGINT UNSIGNED NOT NULL,
   `Object` BIGINT NOT NULL,
@@ -248,7 +225,7 @@ CREATE TABLE IF NOT EXISTS `warfog` (
   UNIQUE INDEX `ID_UNIQUE` (`ID` ASC),
   CONSTRAINT `fk_warfog_charid`
     FOREIGN KEY (`CharID`)
-    REFERENCES `character` (`ID`)
+    REFERENCES `dbo`.`character` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -260,7 +237,7 @@ USE `dbo` ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spClearOnline`;
+DROP procedure IF EXISTS `dbo`.`spClearOnline`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -276,7 +253,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spDeleteOnline`;
+DROP procedure IF EXISTS `dbo`.`spDeleteOnline`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -292,7 +269,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spInsertCharacter`;
+DROP procedure IF EXISTS `dbo`.`spInsertCharacter`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -335,7 +312,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spInsertCharacter`(
 	in nMudosaPoint bigint, 
 	in nSpPoint int)
 BEGIN
-	INSERT INTO `character` 
+	INSERT INTO `dbo`.`character` 
 	(`AccID`, 
 	`ServerID`, 
 	`Name`, 
@@ -422,7 +399,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spInsertItem`;
+DROP procedure IF EXISTS `dbo`.`spInsertItem`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -485,7 +462,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spInsertOnline`;
+DROP procedure IF EXISTS `dbo`.`spInsertOnline`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -519,7 +496,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spUpdateDirection`;
+DROP procedure IF EXISTS `dbo`.`spUpdateDirection`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -535,7 +512,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spUpdatePosition`;
+DROP procedure IF EXISTS `dbo`.`spUpdatePosition`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -551,7 +528,7 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 USE `dbo`;
-DROP procedure IF EXISTS `spQueryInsertItem`;
+DROP procedure IF EXISTS `dbo`.`spQueryInsertItem`;
 
 DELIMITER $$
 USE `dbo`$$
@@ -613,7 +590,7 @@ GRANT USAGE ON *.* TO dboserver;
 SET SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 CREATE USER 'dboserver' IDENTIFIED BY 'dboserver';
 
-GRANT ALL ON * TO 'dboserver';
+GRANT ALL ON `dbo`.* TO 'dboserver';
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

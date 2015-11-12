@@ -14,6 +14,7 @@
 #include <Database.h>
 #include <Encoder.h>
 #include <TableAll.h>
+#include <TwTableAll.h>//Newer Tables
 #include "CharProtocol.h"
 
 enum CHAR_SESSION
@@ -45,13 +46,14 @@ public:
 	bool PacketControl(Packet* pPacket);
 
 	// DATA FUNCTIONS
-	int GetDBAccCharListData(sCU_CHARACTER_INFO* outdata);
-	int DBInsertCharData(sPC_SUMMARY data, sNEWBIE_TBLDAT nbdata);
+	void GetDBAccCharListData(sCU_CHARACTER_INFO& outdata);
+	int DBInsertCharData(sPC_SUMMARY data, sNEWBIE_TBLDAT2* nbdata);
 	eRESULTCODE CheckUsedName(WCHAR* Name);
 	eRESULTCODE DBChangeCharName(WCHAR* Name, int charId);
 	int GetDBAllowedRaces();
 	void DBUpdateLastServer();
 	void DBGetGMAccess();
+
 	// PROTOCOL FUNCTIONS
 	void SendLoginResult(sUC_LOGIN_REQ* data);
 	void SendServerlist(bool one);
@@ -112,7 +114,6 @@ public:
 	int	OnConfiguration(const char* ConfigFile);
 	int OnCommandArgument(int argc, _TCHAR* argv[]) { return 0; }
 	int	OnAppStart();
-	unsigned int AcquireSerialID();
 	void Run()
 	{
 		DWORD TickCur, TickOld = ::GetTickCount();
@@ -128,18 +129,19 @@ public:
 	}
 
 	TableContainer* GetTableContainer() { return m_pTableContainer; }
+	TwTableAll* GetTwTable(){ return m_pTwTableAll; }
 	bool LoadTableData();
 
 private:
 	Acceptor _clientAcceptor;
 	TableContainer* m_pTableContainer;
+	TwTableAll* m_pTwTableAll;
 
 public:
 	Config* ServerCfg;
 	Database* ServerDB;
 	int ServerID;
 	char* gameDataPath;
-	unsigned int m_uiSerialID;
 };
 
 #endif
